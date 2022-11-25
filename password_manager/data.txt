@@ -1,2 +1,0 @@
-website | your@email.com | password
-another_website | your@email.com | password2
