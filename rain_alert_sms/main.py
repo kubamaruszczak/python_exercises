@@ -1,4 +1,5 @@
 import requests
+import os
 from twilio.rest import Client
 
 TWILIO_NUM = "+123123123"
@@ -8,14 +9,14 @@ MY_NUM = "+321321321"
 def will_rain_today() -> bool:
     """Returns True if it will rain in next 12 hours and False otherwise"""
     api_key = "your_api_key"
-    opw_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
+    owm_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
     weather_params = {
         "lat": 50.064651,
         "lon": 19.944981,
-        "appid": api_key,
+        "appid": os.environ.get("OWM_API_KEY"),
     }
 
-    response = requests.get(url=opw_endpoint, params=weather_params)
+    response = requests.get(url=owm_endpoint, params=weather_params)
     response.raise_for_status()
     weather_data = response.json()
     today_weather = weather_data["list"][:5]  # weather for the next 12 hours
@@ -27,8 +28,8 @@ def will_rain_today() -> bool:
 
 
 def send_sms():
-    account_sid = "your_acc_sid"
-    auth_token = "your_auth_token"
+    account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+    auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
     client = Client(account_sid, auth_token)
     message = client.messages.create(body="It's going to rain today. Remember to bring an umbrella! ☔",
                                      from_=TWILIO_NUM,
