@@ -67,8 +67,18 @@ def update_pixel(username: str, graph_id: str, date: str, new_quantity: str):
     print(response.text)
 
 
+def delete_pixel(username: str, graph_id: str, date: str,):
+    headers = {
+        "X-USER-TOKEN": TOKEN,
+    }
+    delete_pixel_endpoint = f"/v1/users/{username}/graphs/{graph_id}/{date}"
+    response = requests.delete(url=f"{pixela_url}{delete_pixel_endpoint}", headers=headers)
+    print(response.text)
+
+
 # create_account(USERNAME, TOKEN)
 # create_graph(USERNAME, GRAPH_ID, "Python Learning", "minutes", "int", "shibafu")
 today = datetime.now().strftime("%Y%m%d")
 # post_pixel(USERNAME, GRAPH_ID, today, "90")
-update_pixel(USERNAME, GRAPH_ID, today, "120")
+# update_pixel(USERNAME, GRAPH_ID, today, "120")
+delete_pixel(USERNAME, GRAPH_ID, today)
