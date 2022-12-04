@@ -1,5 +1,6 @@
 class FlightData:
     """Class responsible for structuring the flight data"""
+
     def __init__(self, flight_data):
         # Cities info
         self.fly_from_code = flight_data["data"][0]["flyFrom"]
