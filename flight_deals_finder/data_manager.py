@@ -1,12 +1,13 @@
 import requests
+import os
 
 
 class DataManager:
     """This class is responsible for talking to the Google Sheet."""
 
-    def __init__(self, endpoint, username, password):
-        self.endpoint = endpoint
-        self.auth = (username, password)
+    def __init__(self):
+        self.endpoint = "https://api.sheety.co/a042454111d46a1f9daaa68e9f7ca593/flightDealsFinder/prices"
+        self.auth = (os.environ.get("USERNAME"), os.environ.get("PASSWORD"))
 
     def get_sheet(self):
         response = requests.get(url=self.endpoint, auth=self.auth)

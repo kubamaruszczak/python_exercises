@@ -4,13 +4,12 @@ from flight_search import FlightSearch
 from flight_data import FlightData
 from notification_manager import NotificationManager
 
+ORIGIN_CITY_IATA = "LON"
+
 # Create data manager
-sheet_endpoint = "https://api.sheety.co/a042454111d46a1f9daaa68e9f7ca593/flightDealsFinder/prices"
-data_manager = DataManager(sheet_endpoint, os.environ.get("USERNAME"), os.environ.get("PASSWORD"))
-
+data_manager = DataManager()
 # Create flight searcher
-flight_search = FlightSearch("London")
-
+flight_search = FlightSearch()
 # Create notification manager
 notification_manager = NotificationManager(os.environ.get("MY_NUM"))
 
@@ -22,7 +21,7 @@ for row in sheet_data:
         row["iataCode"] = flight_search.get_iata_code(row["city"])
         data_manager.update_row(row)
     # Check for flights
-    flight_data = flight_search.search_flight(row["iataCode"])
+    flight_data = flight_search.search_flight(ORIGIN_CITY_IATA, row["iataCode"])
     if flight_data is not None:
         flight = FlightData(flight_data)
         print(flight.get_info_message())
