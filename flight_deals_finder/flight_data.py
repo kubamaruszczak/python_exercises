@@ -16,9 +16,11 @@ class FlightData:
         # Optional stopovers info
         self.stopovers = 0
         self.via_city = ""
+        self.via_city_code = ""
         if len(flight_data["data"][0]["route"]) > 2:
             self.stopovers = 1
-            self.via_city = flight_data["data"][0]["route"][1]["cityTo"]
+            self.via_city = flight_data["data"][0]["route"][1]["cityFrom"]
+            self.via_city_code = flight_data["data"][0]["route"][1]["flyFrom"]
 
     def get_info_message(self):
         """Returns message that consists essential flight data"""
@@ -26,5 +28,5 @@ class FlightData:
                   f"from {self.fly_from_city}-{self.fly_from_code} to {self.fly_to_city}-{self.fly_to_code}, " \
                   f"from {self.departure_date} to {self.return_date}"
         if self.stopovers > 0:
-            message += f"\nFlight has {self.stopovers} stopover, via {self.via_city}"
+            message += f"\nFlight has {self.stopovers} stopover, via {self.via_city}-{self.via_city_code}"
         return message

@@ -4,7 +4,7 @@ from flight_search import FlightSearch
 from flight_data import FlightData
 from notification_manager import NotificationManager
 
-ORIGIN_CITY_IATA = "LON"
+ORIGIN_CITY_IATA = "KRK"
 
 # Create data manager
 data_manager = DataManager()
