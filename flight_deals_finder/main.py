@@ -15,6 +15,7 @@ notification_manager = NotificationManager(os.environ.get("MY_NUM"))
 
 # Get data from the sheet
 sheet_data = data_manager.get_sheet()
+emails = data_manager.get_emails()
 for row in sheet_data:
     # Fill IATA codes if needed
     if row["iataCode"] == "":
@@ -26,4 +27,6 @@ for row in sheet_data:
         flight = FlightData(flight_data)
         print(flight.get_info_message())
         if flight.price < row["lowestPrice"]:
-            notification_manager.send_message(flight.get_info_message())
+            message = flight.get_info_message()
+            # notification_manager.send_message(message)
+            notification_manager.send_emails(emails, message.encode("utf-8"))
