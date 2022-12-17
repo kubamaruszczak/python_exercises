@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 from time import sleep
 import os
 
@@ -52,10 +52,17 @@ sleep(2)
 dark_mode_close = driver.find_element("xpath", '//*[@id="q-839802255"]/main/div/div[2]/button/svg/path')
 dark_mode_close.click()
 
-while True:
+for n in range(100):
     sleep(1.5)
-    like_button = driver.find_element("xpath", '//*[@id="q888578821"]/div/div[1]/div/main/div[1]/div/div/div[1]/div[1]/div/div[3]/div/div[4]/button/span/span/svg/path')
-    like_button.click()
 
-# sleep(600)
-# driver.close()
+    try:
+        like_button = driver.find_element("xpath", '//*[@id="q888578821"]/div/div[1]/div/main/div[1]/div/div/div[1]/div[1]/div/div[3]/div/div[4]/button/span/span/svg/path')
+        like_button.click()
+    except ElementClickInterceptedException:
+        try:
+            match_popup = driver.find_element("css selector" ".itsAMatch a")
+            match_popup.click()
+        except NoSuchElementException:
+            sleep(2)
+
+driver.close()
