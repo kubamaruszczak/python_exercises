@@ -39,3 +39,18 @@ class PropertiesFinder:
         raw_addresses = self.soup.select(".property-card-link address")
         addresses = [address.text for address in raw_addresses]
         return addresses
+
+    def get_properties_data(self):
+        addresses = self.get_addresses()
+        prices = self.get_prices()
+        links = self.get_links()
+
+        # Create a properties info dict
+        properties = {}
+        for idx in range(len(links)):
+            properties[idx] = {
+                "address": addresses[idx],
+                "price": prices[idx],
+                "link": links[idx],
+            }
+        return properties
