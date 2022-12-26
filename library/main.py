@@ -54,6 +54,15 @@ def edit():
     return render_template("edit.html", book=book_details)
 
 
+@app.route('/delete', methods=["POST", "GET"])
+def delete():
+    book_id = request.args.get("book_id")
+    book_selected = db.get_or_404(Book, book_id)
+    db.session.delete(book_selected)
+    db.session.commit()
+    return redirect(url_for("home"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
