@@ -27,12 +27,13 @@ class Cafe(db.Model):
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
+
 @app.route("/")
 def home():
     return render_template("index.html")
     
 
-## HTTP GET - Read Record
+# HTTP GET - Read Record
 @app.route('/random')
 def get_random_cafe():
     # Query all cafes from database
@@ -48,11 +49,45 @@ def get_all_cafes():
     all_cafes = db.session.query(Cafe).all()
     return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes])
 
-## HTTP POST - Create Record
 
-## HTTP PUT/PATCH - Update Record
+@app.route('/search')
+def search_cafe():
+    # Read passed parameter
+    query_location = request.args.get("loc")
+    # Query all cafes
+    cafe_selected = db.session.query(Cafe).filter_by(location=query_location).first()
+    if cafe_selected is None:
+        error_message = {
+            "Not Found": "Sorry, we don't have a cafe at that location."
+        }
+        return jsonify(error=error_message)
+    return jsonify(cafe=cafe_selected.to_dict())
 
-## HTTP DELETE - Delete Record
+
+# HTTP POST - Create Record
+@app.route('/add', methods=["POST"])
+def add_cafe():
+    # Create new Cafe object
+    new_cafe = Cafe(
+        can_take_calls=bool(request.form.get("can_take_calls").title),
+        coffee_price=request.form.get("coffee_price"),
+        has_sockets=bool(request.form.get("has_sockets").title()),
+        has_toilet=bool(request.form.get("has_toilet").title()),
+        has_wifi=bool(request.form.get("has_wifi")),
+        img_url=request.form.get("img_url"),
+        location=request.form.get("location"),
+        map_url=request.form.get("map_url"),
+        name=request.form.get("name"),
+        seats=request.form.get("seats"),
+    )
+    db.session.add(new_cafe)
+    db.session.commit()
+    return jsonify(response={"success": "Successfully added the new cafe."})
+
+
+# HTTP PUT/PATCH - Update Record
+
+# HTTP DELETE - Delete Record
 
 
 if __name__ == '__main__':
