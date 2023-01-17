@@ -35,8 +35,9 @@ def print_table():
     print('\n')
 
 
-def make_choice(player: str):
-    """Function to place user choice on the game table"""
+def make_choice(player: str) -> tuple:
+    """Function to place user choice on the game table.
+    Returns position of placed symbol in form of a tuple"""
     global game_table
 
     # Take user inputs
@@ -51,33 +52,51 @@ def make_choice(player: str):
         # Check if the field is empty
         if game_table[row_num][col_num] == ' ':
             game_table[row_num][col_num] = player
+            return row_num, col_num
         else:
             print_table()
             print('This field is already taken! Try again.')
-            make_choice(player)
+            return make_choice(player)
 
     else:
         print_table()
         print('Invalid coordinates! Try again.')
-        make_choice(player)
+        return make_choice(player)
 
 
-def check_score():
-    global
+def check_score(player: str, last_coordinates: tuple) -> bool:
+    """Checks if the user wins or if it's a draw based on the
+    last coordinates"""
+    global game_table
+
+    row_num, col_num = last_coordinates
+
+    if ( [row_num][0] == player and game_table[row_num][1] == player and game_table[row_num][1] == player or
+         game_table[0][col_num] == player and game_table[1][col_num] == player and game_table[2][col_num] == player or
+         game_table[0][0] == player and game_table[1][1] == player and game_table[2][2] == player or
+         game_table[0][2] == player and game_table[1][1] == player and game_table[2][0] == player):
+        print(f"{player} WINS")
+        return True
+    elif ' ' in game_table[0] + game_table[1] + game_table[2]:
+        return False
+    else:
+        print(f"It's a draw!")
+        return True
 
 
 # X starts the game
 current_player = 'X'
 print_table()
-make_choice(player=current_player)
+print(make_choice(player=current_player))
 
 game_is_on = True
 while game_is_on:
     if current_player == 'X':
         current_player = 'O'
-        print_table()
-        make_choice(player=current_player)
     else:
         current_player = 'X'
-        print_table()
-        make_choice(player=current_player)
+
+    print_table()
+    last_pos = make_choice(player=current_player)
+    if check_score(current_player, last_pos) is True:
+        game_is_on = False
