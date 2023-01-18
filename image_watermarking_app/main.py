@@ -1,9 +1,11 @@
 from tkinter import *
 from tkinter import filedialog, messagebox
 from PIL import Image
+from os import makedirs
 
-# Colors definitions
+
 BG_COLOR = "#E1D7C6"
+WATERMARK_SIZE = 0.15  # Watermark size in percentages of image size
 
 image_path = None
 
@@ -26,9 +28,30 @@ def add_watermark():
     if image_path is None:
         messagebox.showerror(title="Error", message="No file specified!")
     else:
+        # Open and copy the image
+        im = Image.open(str(image_path))
+        copied_im = im.copy()
+
+        # Calculate max size and desired position for the watermark
+        max_size = int(copied_im.size[0] * WATERMARK_SIZE), int(copied_im.size[1] * WATERMARK_SIZE)
+        shorter_dimension = min(copied_im.size[0], copied_im.size[1])
+        pos = (int(shorter_dimension * 0.05), int(shorter_dimension * 0.05))
+
+        # Open a watermark image
+        watermark = Image.open("images/watermark.png")
+        watermark.thumbnail(max_size)
+        copied_im.paste(watermark, pos, watermark)
+
+        # Save watermarked file in watermarked_images directory
+        try:
+            copied_im.save(f"watermarked_images/watermarked_{str(image_path).split('/')[-1]}")
+        except FileNotFoundError:
+            makedirs('watermarked_images')
+            copied_im.save(f"watermarked_images/watermarked_{str(image_path).split('/')[-1]}")
+
         image_path = None
+        messagebox.showinfo(title="Info", message="Watermark added. Modified file was saved in modified_images folder")
         canvas.itemconfig(image_name_text, text='No image chosen')
-        messagebox.showinfo(title="Info", message="Ok")
 
 
 # UI setup
