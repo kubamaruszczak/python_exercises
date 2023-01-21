@@ -12,7 +12,7 @@ class Player:
     def create_player(self):
         for pos in STARTING_POS:
             new_segment = Turtle("square")
-            new_segment.color("white")
+            new_segment.color("gainsboro")
             new_segment.shapesize(stretch_wid=0.5, stretch_len=1)
             new_segment.penup()
             new_segment.goto(pos)
@@ -29,3 +29,4 @@ class Player:
             for segment in self.segments:
                 new_x = segment.xcor() + 10
                 segment.setx(new_x)
+
