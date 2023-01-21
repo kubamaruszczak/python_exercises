@@ -1,4 +1,7 @@
 from turtle import Turtle
+from random import choice
+
+STARTING_POS = (0, -240)
 
 
 class Ball(Turtle):
@@ -9,8 +12,9 @@ class Ball(Turtle):
         self.color("snow")
         self.penup()
         self.shapesize(stretch_wid=0.5, stretch_len=0.5)
+        self.goto(STARTING_POS)
         # Movement speed
-        self.x_speed = 10
+        self.x_speed = choice([-10, 10])
         self.y_speed = 10
 
     def move(self):

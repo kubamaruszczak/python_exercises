@@ -1,7 +1,14 @@
 from turtle import Screen
 from player import Player
 from ball import Ball
+from tile_manager import TileManager
 from time import sleep
+
+
+def start_game():
+    global game_is_on
+    game_is_on = True
+
 
 # Screen set up
 screen = Screen()
@@ -14,13 +21,26 @@ screen.tracer(0)
 player = Player()
 # Registration of callbacks to move player sides
 screen.listen()
-screen.onkey(player.move_left, "Left")
-screen.onkey(player.move_right, "Right")
 
 # Ball creation
 ball = Ball()
 
-game_is_on = True
+# Tile manager creation
+tile_manager = TileManager()
+tile_manager.create_tiles(6)
+
+# Space callback
+screen.onkey(start_game, "space")
+
+game_is_on = False
+while not game_is_on:
+    # Wait for the space press to start the game
+    screen.update()
+
+# Register player movement callbacks
+screen.onkey(player.move_left, "Left")
+screen.onkey(player.move_right, "Right")
+
 while game_is_on:
     sleep(0.1)
     ball.move()
@@ -49,6 +69,24 @@ while game_is_on:
         # Generate bounce depending on which segment was the closest one
         if ball.distance(player.segments[closest_segment_idx]) < 20:
             ball.player_bounce(closest_segment_idx)
+
+    # Detect collision with tile
+    for tile in tile_manager.all_tiles:
+        if tile.distance(ball) <= 20:
+            print(f"roznica y {abs(tile.ycor() - ball.ycor())}")
+            print(f"roznica: x {abs(tile.xcor() - ball.xcor())}")
+            print("---")
+
+            if abs(tile.xcor() - ball.xcor()) < 15:
+                ball.ceiling_bounce()
+            else:
+                ball.wall_bounce()
+            tile.delete()
+            break
+
+    # Detect end of the game
+    if ball.ycor() < -280:
+        game_is_on = False
 
     screen.update()
 
