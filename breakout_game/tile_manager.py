@@ -2,9 +2,9 @@ from turtle import Turtle
 from random import choice
 
 STARTING_X = -383
-STARTING_Y = 285
+STARTING_Y = 260
 
-colors = ["red", "green", "blue", "yellow", "orange", "magenta"]
+colors = ["red", "blue", "yellow", "orange", "magenta", "lime"]
 
 
 class Tile(Turtle):
@@ -16,9 +16,6 @@ class Tile(Turtle):
         self.penup()
         self.color(color)
         self.goto((x_pos, y_pos))
-
-    def delete(self):
-        self.goto((500, -500))
 
 
 class TileManager:
@@ -44,3 +41,7 @@ class TileManager:
             # Update creation pos before next row
             cur_x = STARTING_X
             cur_y -= 20
+
+    def delete_tile(self, tile):
+        tile.goto((500, -500))
+        self.all_tiles.remove(tile)

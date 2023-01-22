@@ -2,6 +2,7 @@ from turtle import Screen
 from player import Player
 from ball import Ball
 from tile_manager import TileManager
+from scoreboard import Scoreboard
 from time import sleep
 
 
@@ -27,7 +28,10 @@ ball = Ball()
 
 # Tile manager creation
 tile_manager = TileManager()
-tile_manager.create_tiles(6)
+tile_manager.create_tiles(1)
+
+# Scoreboard creation
+scoreboard = Scoreboard()
 
 # Space callback
 screen.onkey(start_game, "space")
@@ -50,7 +54,7 @@ while game_is_on:
         ball.wall_bounce()
 
     # Detect collision with the ceiling - TOP WALL BOUNCE
-    if ball.ycor() > 285:
+    if ball.ycor() > 250:
         ball.ceiling_bounce()
 
     # Detect collision with the player
@@ -73,19 +77,18 @@ while game_is_on:
     # Detect collision with tile
     for tile in tile_manager.all_tiles:
         if tile.distance(ball) <= 20:
-            print(f"roznica y {abs(tile.ycor() - ball.ycor())}")
-            print(f"roznica: x {abs(tile.xcor() - ball.xcor())}")
-            print("---")
-
             if abs(tile.xcor() - ball.xcor()) < 15:
                 ball.ceiling_bounce()
             else:
                 ball.wall_bounce()
-            tile.delete()
+
+            scoreboard.add_point()
+            tile_manager.delete_tile(tile)
             break
 
     # Detect end of the game
-    if ball.ycor() < -280:
+    if ball.ycor() < -280 or len(tile_manager.all_tiles) == 0:
+        scoreboard.game_over()
         game_is_on = False
 
     screen.update()
