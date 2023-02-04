@@ -2,13 +2,12 @@ import PyPDF2
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 from contextlib import closing
-import sys
 import os
-import subprocess
-from tempfile import gettempdir
+# import subprocess
+# from tempfile import gettempdir
 
 
-def get_speach_file(text: str):
+def get_audio_file(text: str, save_path: str) -> bool:
     polly = boto3.client('polly')
     try:
         # Try requesting
@@ -18,30 +17,28 @@ def get_speach_file(text: str):
     except (BotoCoreError, ClientError) as error:
         # Service returned an error - exit application
         print(error)
-        sys.exit(-1)
+        return False
 
     if "AudioStream" in response:
         with closing(response["AudioStream"]) as stream:
-            audio_file_path = os.path.join(gettempdir(), "audio.mp3")
-
             try:
                 # Saving the output to the file as binary stream
-                with open(audio_file_path, "wb") as file:
+                with open(save_path, "wb") as file:
                     file.write(stream.read())
-            except IOError as error:
+            except (OSError, IOError) as error:
                 print(error)
-                sys.exit(-1)
+                return False
     else:
         print("Could not stream audio")
-        sys.exit(-1)
+        return False
 
-    # Play the audio using the platform's default player
-    if sys.platform == "win32":
-        os.startfile(audio_file_path)
-    else:
-        # The following works on macOS and Linux. (Darwin = mac, xdg-open = linux).
-        opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, audio_file_path])
+    # # Play the audio using the platform's default player
+    # if sys.platform == "win32":
+    #     os.startfile(audio_file_path)
+    # else:
+    #     # The following works on macOS and Linux. (Darwin = mac, xdg-open = linux).
+    #     opener = "open" if sys.platform == "darwin" else "xdg-open"
+    #     subprocess.call([opener, audio_file_path])
 
 
 def get_pdf_file_contents(filepath: str) -> str:
@@ -54,10 +51,6 @@ def get_pdf_file_contents(filepath: str) -> str:
                 file_contents += f"{page.extract_text()}\n"
     except (FileNotFoundError, FileExistsError) as error:
         print(error)
-        sys.exit(-1)
+        return ""
 
     return file_contents
-
-pdf_contents = get_pdf_file_contents("pdfs/sample.pdf")
-print(pdf_contents)
-get_speach_file("this is sample text")
