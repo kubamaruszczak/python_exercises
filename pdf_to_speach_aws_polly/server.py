@@ -40,14 +40,20 @@ def convert_file():
         # Check if file has allowed extension
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            pdf_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                 os.mkdir(app.config['UPLOAD_FOLDER'])
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(pdf_file_path)
 
-            # Here file conversion should be executed
-            # TO ADD
-
-            return redirect(url_for('download', filename=filename))
+            # Getting audio file from uploaded pdf file
+            pdf_contents = polly_client.get_pdf_file_contents(pdf_file_path)
+            if pdf_contents != "":
+                mp3_filename = filename.rsplit(".", 1)[0] + ".mp3"
+                mp3_save_path = os.path.join(app.config['UPLOAD_FOLDER'], mp3_filename)
+                polly_client.get_audio_file(pdf_contents, mp3_save_path)
+                return redirect(url_for('download', filename=mp3_filename))
+            else:
+                flash('Pdf file is empty')
         else:
             flash('This is not pdf file')
 
